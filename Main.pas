@@ -456,16 +456,17 @@ begin
 		if temp = MoveType.Nothing then
 			CanMoveTo := MoveType.Nothing;
 	end
-	else if (self.HasMoved = 0) and (self.Position.Position = 4) and (moveX = -2) and (moveY = 0)
+	else if (self.HasMoved = 0) and ((self.Position.Position = 4) or ((self.Position.Position = 60)))
+	and (moveX = -2) and (moveY = 0) and (not self.Checked)
 	and (MainForm.Grid[self.Position.Position - 3].HeldPiece = nil)
 	and (MainForm.Grid[self.Position.Position - 2].HeldPiece = nil)
 	and (MainForm.Grid[self.Position.Position - 1].HeldPiece = nil)
-	and (inherited CanMoveTo(MainForm.Grid[self.Position.Position - 3]) = MoveType.Move)
 	and (inherited CanMoveTo(MainForm.Grid[self.Position.Position - 2]) = MoveType.Move)
 	and (inherited CanMoveTo(MainForm.Grid[self.Position.Position - 1]) = MoveType.Move)
 	and (MainForm.Grid[0].HeldPiece.HasMoved = 0) then
 		CanMoveTo := MoveType.Castle
-	else if (self.HasMoved = 0) and (self.Position.Position = 4) and (moveX = 2) and (moveY = 0)
+	else if (self.HasMoved = 0) and ((self.Position.Position = 4) or ((self.Position.Position = 60)))
+	and (moveX = 2) and (moveY = 0) and (not self.Checked)
 	and (MainForm.Grid[self.Position.Position + 1].HeldPiece = nil)
 	and (MainForm.Grid[self.Position.Position + 2].HeldPiece = nil)
 	and (inherited CanMoveTo(MainForm.Grid[self.Position.Position + 1]) = MoveType.Move)
@@ -488,10 +489,27 @@ begin
 	moveY := otherY - selfY;
 
 	if (abs(moveX) <= 1) and (abs(moveY) <= 1) then
+	begin
 		if square.HeldPiece = nil then
 			CanMoveToNoCheck := MoveType.Move
 		else if square.HeldPiece.Color <> self.Color then
 			CanMoveToNoCheck := MoveType.Capture;
+	end
+	else if (self.HasMoved = 0) and (self.Position.Position = 4) and (moveX = -2) and (moveY = 0) and (not self.Checked)
+	and (MainForm.Grid[self.Position.Position - 3].HeldPiece = nil)
+	and (MainForm.Grid[self.Position.Position - 2].HeldPiece = nil)
+	and (MainForm.Grid[self.Position.Position - 1].HeldPiece = nil)
+	and (inherited CanMoveToNoCheck(MainForm.Grid[self.Position.Position - 2]) = MoveType.Move)
+	and (inherited CanMoveToNoCheck(MainForm.Grid[self.Position.Position - 1]) = MoveType.Move)
+	and (MainForm.Grid[0].HeldPiece.HasMoved = 0) then
+		CanMoveToNoCheck := MoveType.Castle
+	else if (self.HasMoved = 0) and (self.Position.Position = 4) and (moveX = 2) and (moveY = 0) and (not self.Checked)
+	and (MainForm.Grid[self.Position.Position + 1].HeldPiece = nil)
+	and (MainForm.Grid[self.Position.Position + 2].HeldPiece = nil)
+	and (inherited CanMoveToNoCheck(MainForm.Grid[self.Position.Position + 1]) = MoveType.Move)
+	and (inherited CanMoveToNoCheck(MainForm.Grid[self.Position.Position + 2]) = MoveType.Move)
+	and (MainForm.Grid[7].HeldPiece.HasMoved = 0) then
+		CanMoveToNoCheck := MoveType.Castle;
 end;
 
 function TPieceQueen.CanMoveTo(square: TSquare): MoveType;
@@ -793,7 +811,12 @@ begin
 			CanMoveToNoCheck := MoveType.Move
 		else if doubleMove and (abs(moveY) = 2) and (moveX = 0) and (direction > 0)
 		and (MainForm.Grid[PosToIndex(otherX, otherY - (moveY div abs(moveY)))].HeldPiece = nil) then
-			CanMoveToNoCheck := MoveType.Move;
+			CanMoveToNoCheck := MoveType.Move
+		else if (abs(moveX) = 1) and (direction = 1)
+		and (MainForm.Grid[PosToIndex(otherX, otherY - (moveY div abs(moveY)))].HeldPiece <> nil) then
+			if (MainForm.Grid[PosToIndex(otherX, otherY - (moveY div abs(moveY)))].HeldPiece.ClassType = TPiecePawn)
+			and (MainForm.Grid[PosToIndex(otherX, otherY - (moveY div abs(moveY)))].HeldPiece.HasMoved = 1) then
+				CanMoveToNoCheck := MoveType.Capture;
 	end
 	else if (square.HeldPiece.Color <> self.Color) and (abs(moveX) = 1) and (direction = 1) then
 		CanMoveToNoCheck := MoveType.Capture;
