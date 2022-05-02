@@ -105,7 +105,7 @@ type
 	TMainForm = class(TForm)
 	public
 		Grid: array [0..63] of TSquare;
-		CurrCase: TSquare;
+		SelectedCase: TSquare;
 		Turn: Player;
 
 		Pieces: array [Player.White..Player.Black] of TObjectList<TPiece>;
@@ -185,6 +185,7 @@ begin
 	self.OnDblClick := ImageDblClick;
 	self.OnClick := ImageClick;
 
+	square.HeldPiece := self;
 	MainForm.Pieces[color].Add(self);
 end;
 
@@ -198,6 +199,8 @@ begin
 		self.Picture.LoadFromFile('../../Images/kingW.png')
 	else
 		self.Picture.LoadFromFile('../../Images/kingB.png');
+
+	MainForm.Kings[color] := self;
 end;
 
 constructor TPieceQueen.Create(square: TSquare; color: Player);
@@ -293,46 +296,32 @@ begin
 end;
 
 procedure TMainForm.InitStdGameBoard;
+var
+	i: integer;
 begin
-	self.Grid[0].HeldPiece := TPieceRook.Create(self.Grid[0], Player.White);
-	self.Grid[1].HeldPiece := TPieceKnight.Create(self.Grid[1], Player.White);
-	self.Grid[2].HeldPiece := TPieceBishop.Create(self.Grid[2], Player.White);
-	self.Grid[3].HeldPiece := TPieceQueen.Create(self.Grid[3], Player.White);
-	self.Grid[4].HeldPiece := TPieceKing.Create(self.Grid[4], Player.White);
-	self.Grid[5].HeldPiece := TPieceBishop.Create(self.Grid[5], Player.White);
-	self.Grid[6].HeldPiece := TPieceKnight.Create(self.Grid[6], Player.White);
-	self.Grid[7].HeldPiece := TPieceRook.Create(self.Grid[7], Player.White);
+	TPieceRook.Create(self.Grid[0], Player.White);
+	TPieceKnight.Create(self.Grid[1], Player.White);
+	TPieceBishop.Create(self.Grid[2], Player.White);
+	TPieceQueen.Create(self.Grid[3], Player.White);
+	TPieceKing.Create(self.Grid[4], Player.White);
+	TPieceBishop.Create(self.Grid[5], Player.White);
+	TPieceKnight.Create(self.Grid[6], Player.White);
+	TPieceRook.Create(self.Grid[7], Player.White);
 
-	self.Grid[0 + 8].HeldPiece := TPiecePawn.Create(self.Grid[0 + 8], Player.White);
-	self.Grid[1 + 8].HeldPiece := TPiecePawn.Create(self.Grid[1 + 8], Player.White);
-	self.Grid[2 + 8].HeldPiece := TPiecePawn.Create(self.Grid[2 + 8], Player.White);
-	self.Grid[3 + 8].HeldPiece := TPiecePawn.Create(self.Grid[3 + 8], Player.White);
-	self.Grid[4 + 8].HeldPiece := TPiecePawn.Create(self.Grid[4 + 8], Player.White);
-	self.Grid[5 + 8].HeldPiece := TPiecePawn.Create(self.Grid[5 + 8], Player.White);
-	self.Grid[6 + 8].HeldPiece := TPiecePawn.Create(self.Grid[6 + 8], Player.White);
-	self.Grid[7 + 8].HeldPiece := TPiecePawn.Create(self.Grid[7 + 8], Player.White);
+	for i := 0 to 7 do
+	begin
+		TPiecePawn.Create(self.Grid[i + 8], Player.White);
+		TPiecePawn.Create(self.Grid[i + 48], Player.Black);
+	end;
 
-
-	self.Grid[0 + 48].HeldPiece := TPiecePawn.Create(self.Grid[0 + 48], Player.Black);
-	self.Grid[1 + 48].HeldPiece := TPiecePawn.Create(self.Grid[1 + 48], Player.Black);
-	self.Grid[2 + 48].HeldPiece := TPiecePawn.Create(self.Grid[2 + 48], Player.Black);
-	self.Grid[3 + 48].HeldPiece := TPiecePawn.Create(self.Grid[3 + 48], Player.Black);
-	self.Grid[4 + 48].HeldPiece := TPiecePawn.Create(self.Grid[4 + 48], Player.Black);
-	self.Grid[5 + 48].HeldPiece := TPiecePawn.Create(self.Grid[5 + 48], Player.Black);
-	self.Grid[6 + 48].HeldPiece := TPiecePawn.Create(self.Grid[6 + 48], Player.Black);
-	self.Grid[7 + 48].HeldPiece := TPiecePawn.Create(self.Grid[7 + 48], Player.Black);
-
-	self.Grid[0 + 56].HeldPiece := TPieceRook.Create(self.Grid[0 + 56], Player.Black);
-	self.Grid[1 + 56].HeldPiece := TPieceKnight.Create(self.Grid[1 + 56], Player.Black);
-	self.Grid[2 + 56].HeldPiece := TPieceBishop.Create(self.Grid[2 + 56], Player.Black);
-	self.Grid[3 + 56].HeldPiece := TPieceQueen.Create(self.Grid[3 + 56], Player.Black);
-	self.Grid[4 + 56].HeldPiece := TPieceKing.Create(self.Grid[4 + 56], Player.Black);
-	self.Grid[5 + 56].HeldPiece := TPieceBishop.Create(self.Grid[5 + 56], Player.Black);
-	self.Grid[6 + 56].HeldPiece := TPieceKnight.Create(self.Grid[6 + 56], Player.Black);
-	self.Grid[7 + 56].HeldPiece := TPieceRook.Create(self.Grid[7 + 56], Player.Black);
-
-	self.Kings[Player.White] := self.Grid[4].HeldPiece as TPieceKing;
-	self.Kings[Player.Black] := self.Grid[4 + 56].HeldPiece as TPieceKing;
+	TPieceRook.Create(self.Grid[0 + 56], Player.Black);
+	TPieceKnight.Create(self.Grid[1 + 56], Player.Black);
+	TPieceBishop.Create(self.Grid[2 + 56], Player.Black);
+	TPieceQueen.Create(self.Grid[3 + 56], Player.Black);
+	TPieceKing.Create(self.Grid[4 + 56], Player.Black);
+	TPieceBishop.Create(self.Grid[5 + 56], Player.Black);
+	TPieceKnight.Create(self.Grid[6 + 56], Player.Black);
+	TPieceRook.Create(self.Grid[7 + 56], Player.Black);
 end;
 
 procedure TMainForm.ColorCheck;
@@ -831,13 +820,13 @@ begin
 		else
 			self.Grid[i].Pen.Color := RGB(240, 217, 181);
 
-	if square = self.CurrCase then
+	if square = self.SelectedCase then
 	begin
-		self.CurrCase := nil;
+		self.SelectedCase := nil;
 		exit;
 	end;
 
-	self.CurrCase := nil;
+	self.SelectedCase := nil;
 
 	if square.HeldPiece = nil then
 		exit;
@@ -876,7 +865,7 @@ begin
 	else
 		square.Pen.Color := RGB(130, 151, 105);
 
-	self.CurrCase := square;
+	self.SelectedCase := square;
 end;
 
 procedure TMainForm.ShapeClick(sender: TObject);
@@ -892,7 +881,7 @@ var
 begin
 	square := sender as TSquare;
 
-	if self.CurrCase = nil then
+	if self.SelectedCase = nil then
 		exit;
 
 	for i := 0 to 63 do
@@ -904,33 +893,33 @@ begin
 	if (square.Pen.Color = integer(RGB(90, 87, 176))) or (square.Pen.Color = integer(RGB(120, 127, 217)))
 	or (square.Pen.Color = integer(RGB(216, 69, 50))) or (square.Pen.Color = integer(RGB(247, 111, 92))) then
 	begin
-		if self.CurrCase.HeldPiece.ClassType = TPiecePawn then
+		if self.SelectedCase.HeldPiece.ClassType = TPiecePawn then
 		begin
-			if ((self.CurrCase.HeldPiece.Color = Player.White) and ((square.Position div 8) = 7))
-			or ((self.CurrCase.HeldPiece.Color = Player.Black) and ((square.Position div 8) = 0)) then
+			if ((self.SelectedCase.HeldPiece.Color = Player.White) and ((square.Position div 8) = 7))
+			or ((self.SelectedCase.HeldPiece.Color = Player.Black) and ((square.Position div 8) = 0)) then
 			begin
-				self.Pieces[self.Turn].Remove(self.CurrCase.HeldPiece);
-				self.CurrCase.HeldPiece := TPieceQueen.Create(self.CurrCase, self.Turn);
+				self.Pieces[self.Turn].Remove(self.SelectedCase.HeldPiece);
+				self.SelectedCase.HeldPiece := TPieceQueen.Create(self.SelectedCase, self.Turn);
 			end;
 			if (square.HeldPiece = nil)
 			and ((square.Pen.Color = integer(RGB(216, 69, 50))) or (square.Pen.Color = integer(RGB(247, 111, 92)))) then
 			begin
-				direction := (square.Position div 8) - (self.CurrCase.Position div 8);
+				direction := (square.Position div 8) - (self.SelectedCase.Position div 8);
 				self.Pieces[GetOpponent(self.Turn)].Remove(self.Grid[square.Position - 8 * direction].HeldPiece);
 			end;
 		end;
-		self.CurrCase.HeldPiece.Move(square);
+		self.SelectedCase.HeldPiece.Move(square);
 	end
 	else if (square.Pen.Color = integer(RGB(90, 195, 65))) or (square.Pen.Color = integer(RGB(119, 236, 106))) then
 	begin
 		if (square.Position = 2) or (square.Position = 58) then
 		begin
-			self.CurrCase.HeldPiece.Move(square);
+			self.SelectedCase.HeldPiece.Move(square);
 			self.Grid[square.Position - 2].HeldPiece.Move(self.Grid[square.Position + 1])
 		end
 		else
 		begin
-			self.CurrCase.HeldPiece.Move(square);
+			self.SelectedCase.HeldPiece.Move(square);
 			self.Grid[square.Position + 1].HeldPiece.Move(self.Grid[square.Position - 1])
 		end;
 
@@ -971,7 +960,7 @@ begin
 	
 	self.ColorCheck;
 
-	self.CurrCase := nil;
+	self.SelectedCase := nil;
 
 	// Check for checkmate/draw
 	temp := true;
