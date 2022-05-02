@@ -1,6 +1,11 @@
 object MainForm: TMainForm
   Left = 0
   Top = 0
+  Margins.Left = 0
+  Margins.Top = 0
+  Margins.Right = 0
+  Margins.Bottom = 0
+  BorderStyle = bsSingle
   Caption = 'MainForm'
   ClientHeight = 864
   ClientWidth = 864

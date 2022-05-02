@@ -263,16 +263,14 @@ begin
 	self.Pieces[Player.White] := TObjectList<TPiece>.Create;
 	self.Pieces[Player.Black] := TObjectList<TPiece>.Create;
 
-	for i := 0 to 63 do
+	for x := 0 to 7 do
+	for y := 0 to 7 do
 	begin
 		square := TSquare.Create(self);
 		square.Parent := self;
-		
+
 		square.Height := 96;
 		square.Width := 96;
-
-		square.Position := i;
-		IndexToPos(i, x, y);
 
 		square.Left := 48 + x * 96;
 		square.Top := 48 + (7-y) * 96;
@@ -280,21 +278,14 @@ begin
 		square.SetOnDblClick(ShapeDblClick);
 		square.SetOnClick(ShapeClick);
 
-		square.Visible := true;
-		square.Show;
-
 		square.Pen.Width := 48;
-		if (i + i div 8) mod 2 = 0 then
-		begin
-			square.Pen.Color := RGB(181, 136, 99);
-			square.Brush.Color := RGB(100, 110, 64);
-		end
+		if (x + y) mod 2 = 0 then
+			square.Pen.Color := RGB(181, 136, 99)
 		else
-		begin
 			square.Pen.Color := RGB(240, 217, 181);
-			square.Brush.Color := RGB(130, 151, 105);
-		end;
 
+		i := PosToIndex(x, y);
+		square.Position := i;
 		self.Grid[i] := square;
 	end;
 
@@ -993,9 +984,9 @@ begin
 	end;
 	
 	if temp then
-		if self.Kings[Player.White].Checked then
+		if self.Kings[Player.White].Checked or (self.Pieces[Player.Black].Count = 0) then
 			ShowMessage('Checkmate.' + sLineBreak + 'Black is victorious!')
-		else if self.Kings[Player.Black].Checked then
+		else if self.Kings[Player.Black].Checked or (self.Pieces[Player.White].Count = 0) then
 			ShowMessage('Checkmate.' + sLineBreak + 'White is victorious!')
 		else
 			ShowMessage('Draw');
